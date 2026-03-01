@@ -1,0 +1,25 @@
+# Dependências
+node_modules
+
+# Ambiente
+.env
+.env.local
+.env.production
+
+# Prisma gerado
+/src/generated/prisma
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Build
+dist
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.sw?

@@ -12,22 +12,21 @@ npm install
 
 # 4. Copiar o .env
 cp .env.example .env
-# → abrir o .env e preencher com os dados reais
+# → abrir o .env e preencher com os dados reais (Pegar com o Matheus)
 
 # 5. Gerar o client do Prisma
 npx prisma generate
 
-# 6. Rodar as migrations
-npx prisma migrate dev
-
-# 7. Popular o banco com dados iniciais (apenas na primeira vez)
+# 6. Popular o banco com dados iniciais (apenas na primeira vez)
 npm run db:seed
 
-# 8. Rodar o servidor
+# 7. Rodar o servidor
 npm run dev
 # → servidor rodando em http://localhost:3333
 ```
-
+> ⚠️ **Importante:** não rodar `npx prisma migrate dev`
+> O banco já está criado e configurado no Neon.
+> Rodar migrate pode gerar conflitos desnecessários.
 ---
 
 ## 📋 Descrição dos Scripts

@@ -48,7 +48,8 @@ apps/web/
 ├── 📄 vite.config.js
 │
 ├── 📁 public/
-    ├── 📄 favicon.ico   → ícone da aba do navegador
+│   └── 📄 favicon.ico
+│
 └── 📁 src/
   ├── 📄 main.jsx
   ├── 📄 App.jsx
@@ -171,6 +172,7 @@ Table/
 Badge/
 → Etiqueta colorida
 → Usado em: Própria | Arrendada | Soja | Milho | Café
+→ Usado em: Pago | Pendente
 
 Spinner/
 → Indicador de carregamento
@@ -191,11 +193,12 @@ Spinner/
 Header/
 → Cabeçalho da aplicação
 → Exibe: nome do sistema, cotação do dólar em tempo real
-→ Exibe: nome do usuário logado
+→ Exibe: fazenda selecionada e nome do usuário logado
 
 Sidebar/
 → Navegação lateral
 → Links para todas as páginas do sistema
+→ Menus diferentes para ADMIN e FUNCIONARIO
 → Destaca a rota ativa
 
 Footer/
@@ -223,49 +226,68 @@ Auth/Cadastro/
 → Rota: /cadastro
 
 Dashboard/
-→ Tela inicial do sistema
-→ Exibe: gráfico custos x vendas (RF07)
-→ Exibe: saldo de sacas em estoque (RF08)
-→ Exibe: cotação do dólar (RF05)
+→ Painel financeiro principal (RF08)
+→ Exibe: gráfico gastos x lucros
+→ Exibe: saldo de sacas em estoque
+→ Exibe: cotação do dólar em tempo real
 → Rota: /
 
 Fazendas/
-→ Listagem de fazendas cadastradas
-→ Ações: criar, editar, deletar
+→ CRUD de fazendas (RF01)
+→ Filtro global de fazenda (RF02)
 → Rota: /fazendas
 
-Safras/
-→ Listagem de safras por fazenda
-→ Ações: criar, editar, deletar
-→ Rota: /safras
+Colheitas/
+→ Controle de sacas colhidas (RF03)
+→ Registro: cultura, quantidade, data, fazenda
+→ Rota: /colheitas
 
-Custos/
-→ Listagem de custos por safra
-→ Ações: criar, editar, deletar
-→ Rota: /custos
+Gastos/
+→ Gestão de gastos (RF05)
+→ Status: Pago | Pendente
+→ Data de vencimento opcional
+→ Filtro avançado (RF07)
+→ Rota: /gastos
 
-Vendas/
-→ Listagem de vendas por safra
-→ Ações: criar, editar, deletar
-→ Rota: /vendas
+Lucros/
+→ Registro de lucros de venda (RF06)
+→ Informa: cultura, sacas, valor, comprador, data
+→ Rota: /lucros
 
 Estoque/
-→ Saldo de sacas disponíveis por safra
-→ Calculado: sacas produzidas - sacas vendidas
+→ Saldo de sacas disponíveis
+→ Calculado: sacas colhidas - sacas vendidas
 → Rota: /estoque
 
+Lembretes/
+→ Cadastro de lembretes (RF10)
+→ Envia notificação via WhatsApp na data
+→ Status: Pendente | Enviado | Cancelado
+→ Rota: /lembretes
+
+Insumos/
+→ Registro diário de insumos (RF13)
+→ Apenas FUNCIONARIO
+→ item, quantidade, observações
+→ Rota: /insumos
+
 Relatorios/
-→ Relatórios financeiros com filtro por data
-→ Exibe: lucro por safra (RF09)
-→ Exibe: custos por cultura (RF10)
-→ Exibe: preço mínimo de venda (RF11)
+→ Apenas ADMIN
+→ Histórico de produção (RF04)
+→ Filtro avançado de gastos (RF07)
 → Rota: /relatorios
 
 Simulacao/
-→ Simulação de venda
-→ Calcula: estoque × cotação do dólar (RF06)
-→ Máximo 4 cliques a partir do dashboard (RNF02)
+→ Calculadora de dívidas (RF09)
+→ Total pago + pendente com cores
+→ Calcula sacas necessárias para quitar
 → Rota: /simulacao
+
+IA/
+→ Apenas ADMIN
+→ Insights gerados pelo Google Gemini (RF11)
+→ Análise de gastos e comparativos
+→ Rota: /ia
 
 ✅ Montam a tela usando components
 ✅ Buscam dados via queries
@@ -283,7 +305,6 @@ Simulacao/
 AuthLayout.jsx
 → Tela limpa sem menu
 → Usado em: /login e /cadastro
-→ Só renderiza o conteúdo da página
 
 MainLayout.jsx
 → Tela completa com navegação
@@ -312,6 +333,11 @@ PrivateRoute.jsx
 PublicRoute.jsx
 → Verifica se o usuário já está logado
 → Se JÁ estiver → redireciona para /
+
+AdminRoute.jsx
+→ Verifica se o usuário é ADMIN
+→ Se NÃO for → redireciona para /dashboard
+→ Protege: /relatorios e /ia
 ```
 
 ---
@@ -342,6 +368,7 @@ useLocalStorage.js
 slices/authSlice.js
 → Armazena o usuário logado
 → Armazena o token JWT
+→ role: ADMIN | FUNCIONARIO
 → isAuthenticated: true | false
 → setUser(user)  → salva o usuário
 → clearUser()    → limpa ao fazer logout
@@ -349,6 +376,11 @@ slices/authSlice.js
 slices/uiSlice.js
 → Controla sidebar aberta ou fechada
 → Controla tema (dark | light)
+
+slices/fazendaSlice.js
+→ Armazena a fazenda selecionada (RF02)
+→ Quando muda → todas as telas filtram por ela
+→ Pode ser "todas" ou uma fazenda específica
 
 index.js
 → Exporta todas as stores
@@ -383,42 +415,58 @@ fazenda.service.js
 → atualizar(id, dados)    → PUT    /api/fazendas/:id
 → deletar(id)             → DELETE /api/fazendas/:id
 
-safra.service.js
-→ buscarTodas()                    → GET    /api/safras
-→ buscarPorFazenda(fazendaId)      → GET    /api/safras/fazenda/:fazendaId
-→ criar(dados)                     → POST   /api/safras
-→ atualizar(id, dados)             → PUT    /api/safras/:id
-→ deletar(id)                      → DELETE /api/safras/:id
+colheita.service.js
+→ buscarTodas()                      → GET    /api/colheitas
+→ buscarPorFazenda(fazendaId)        → GET    /api/colheitas/fazenda/:fazendaId
+→ criar(dados)                       → POST   /api/colheitas
+→ atualizar(id, dados)               → PUT    /api/colheitas/:id
+→ deletar(id)                        → DELETE /api/colheitas/:id
 
-custo.service.js
-→ buscarTodos()                    → GET    /api/custos
-→ buscarPorSafra(safraId)          → GET    /api/custos/safra/:safraId
-→ criar(dados)                     → POST   /api/custos
-→ atualizar(id, dados)             → PUT    /api/custos/:id
-→ deletar(id)                      → DELETE /api/custos/:id
+gasto.service.js
+→ buscarTodos()                      → GET    /api/gastos
+→ buscarPorColheita(colheitaId)      → GET    /api/gastos/colheita/:colheitaId
+→ criar(dados)                       → POST   /api/gastos
+→ atualizar(id, dados)               → PUT    /api/gastos/:id
+→ deletar(id)                        → DELETE /api/gastos/:id
 
-venda.service.js
-→ buscarTodas()                    → GET    /api/vendas
-→ buscarPorSafra(safraId)          → GET    /api/vendas/safra/:safraId
-→ criar(dados)                     → POST   /api/vendas
-→ atualizar(id, dados)             → PUT    /api/vendas/:id
-→ deletar(id)                      → DELETE /api/vendas/:id
+lucro.service.js
+→ buscarTodos()                      → GET    /api/lucros
+→ buscarPorColheita(colheitaId)      → GET    /api/lucros/colheita/:colheitaId
+→ criar(dados)                       → POST   /api/lucros
+→ atualizar(id, dados)               → PUT    /api/lucros/:id
+→ deletar(id)                        → DELETE /api/lucros/:id
 
 estoque.service.js
-→ buscarTodos()                    → GET    /api/estoque
-→ buscarPorSafra(safraId)          → GET    /api/estoque/safra/:safraId
+→ buscarTodos()                      → GET    /api/estoque
+→ buscarPorColheita(colheitaId)      → GET    /api/estoque/colheita/:colheitaId
 
 cotacao.service.js
-→ buscarDolar()                    → GET    /api/cotacao/dollar
+→ buscarDolar()                      → GET    /api/cotacao/dolar
 
 relatorio.service.js
-→ buscarCustosVsVendas(filtros)    → GET    /api/relatorios/custos-vs-vendas
-→ buscarLucroPorSafra(id, filtros) → GET    /api/relatorios/lucro/:safraId
-→ buscarCustosPorCultura(filtros)  → GET    /api/relatorios/custos-por-cultura
-→ buscarPrecoMinimo(filtros)       → GET    /api/relatorios/min-preco
+→ buscarGastosVsLucros(filtros)      → GET    /api/relatorios/gastos-vs-lucros
+→ buscarHistoricoProducao(filtros)   → GET    /api/relatorios/historico-producao
+→ buscarGastosPorTipo(filtros)       → GET    /api/relatorios/gastos-por-tipo
 
 simulacao.service.js
-→ simularVenda(dados)              → POST   /api/simulacao/venda
+→ buscarDividas()                    → GET    /api/simulacao/dividas
+→ calcularSacas(dados)               → POST   /api/simulacao/calcular-sacas
+
+lembrete.service.js
+→ buscarTodos()                      → GET    /api/lembretes
+→ buscarPorId(id)                    → GET    /api/lembretes/:id
+→ criar(dados)                       → POST   /api/lembretes
+→ atualizar(id, dados)               → PUT    /api/lembretes/:id
+→ deletar(id)                        → DELETE /api/lembretes/:id
+
+insumo.service.js
+→ buscarTodos()                      → GET    /api/insumos
+→ buscarPorFazenda(fazendaId)        → GET    /api/insumos/fazenda/:fazendaId
+→ criar(dados)                       → POST   /api/insumos
+→ deletar(id)                        → DELETE /api/insumos/:id
+
+ia.service.js
+→ gerarInsights()                    → GET    /api/ia/insights
 
 ✅ Toda comunicação HTTP fica aqui
 ✅ Retornam a promise diretamente
@@ -437,48 +485,64 @@ useAuthQueries.js
 → useCadastro()    → mutation de cadastro
 
 useFazendaQueries.js
-→ useGetFazendas()      → lista todas as fazendas
-→ useGetFazenda(id)     → busca uma fazenda
-→ useCreateFazenda()    → cria fazenda
-→ useUpdateFazenda()    → atualiza fazenda
-→ useDeleteFazenda()    → deleta fazenda
+→ useGetFazendas()
+→ useGetFazenda(id)
+→ useCreateFazenda()
+→ useUpdateFazenda()
+→ useDeleteFazenda()
 
-useSafraQueries.js
-→ useGetSafras()
-→ useGetSafrasPorFazenda(fazendaId)
-→ useCreateSafra()
-→ useUpdateSafra()
-→ useDeleteSafra()
+useColheitaQueries.js
+→ useGetColheitas()
+→ useGetColheitasPorFazenda(fazendaId)
+→ useCreateColheita()
+→ useUpdateColheita()
+→ useDeleteColheita()
 
-useCustoQueries.js
-→ useGetCustos()
-→ useGetCustosPorSafra(safraId)
-→ useCreateCusto()
-→ useUpdateCusto()
-→ useDeleteCusto()
+useGastoQueries.js
+→ useGetGastos()
+→ useGetGastosPorColheita(colheitaId)
+→ useCreateGasto()
+→ useUpdateGasto()
+→ useDeleteGasto()
 
-useVendaQueries.js
-→ useGetVendas()
-→ useGetVendasPorSafra(safraId)
-→ useCreateVenda()
-→ useUpdateVenda()
-→ useDeleteVenda()
+useLucroQueries.js
+→ useGetLucros()
+→ useGetLucrosPorColheita(colheitaId)
+→ useCreateLucro()
+→ useUpdateLucro()
+→ useDeleteLucro()
 
 useEstoqueQueries.js
 → useGetEstoque()
-→ useGetEstoquePorSafra(safraId)
+→ useGetEstoquePorColheita(colheitaId)
 
 useCotacaoQueries.js
-→ useGetCotacaoDolar()   → busca cotação em tempo real
+→ useGetCotacaoDolar()
 
 useRelatorioQueries.js
-→ useGetCustosVsVendas(filtros)
-→ useGetLucroPorSafra(safraId, filtros)
-→ useGetCustosPorCultura(filtros)
-→ useGetPrecoMinimo(filtros)
+→ useGetGastosVsLucros(filtros)
+→ useGetHistoricoProducao(filtros)
+→ useGetGastosPorTipo(filtros)
 
 useSimulacaoQueries.js
-→ useSimularVenda()
+→ useGetDividas()
+→ useCalcularSacas()
+
+useLembreteQueries.js
+→ useGetLembretes()
+→ useGetLembrete(id)
+→ useCreateLembrete()
+→ useUpdateLembrete()
+→ useDeleteLembrete()
+
+useInsumoQueries.js
+→ useGetInsumos()
+→ useGetInsumosPorFazenda(fazendaId)
+→ useCreateInsumo()
+→ useDeleteInsumo()
+
+useIAQueries.js
+→ useGerarInsights()
 
 ✅ Usa os services para buscar/enviar dados
 ✅ Gerencia loading, error e cache automaticamente
@@ -524,25 +588,31 @@ routes.js
     CADASTRO: '/cadastro',
     DASHBOARD: '/',
     FAZENDAS: '/fazendas',
-    SAFRAS: '/safras',
-    CUSTOS: '/custos',
-    VENDAS: '/vendas',
+    COLHEITAS: '/colheitas',
+    GASTOS: '/gastos',
+    LUCROS: '/lucros',
     ESTOQUE: '/estoque',
+    LEMBRETES: '/lembretes',
+    INSUMOS: '/insumos',
     RELATORIOS: '/relatorios',
     SIMULACAO: '/simulacao',
+    IA: '/ia',
   }
 
 api.js
 → API = {
     AUTH: { LOGIN: '/auth/login', CADASTRO: '/auth/cadastro' },
     FAZENDAS: '/fazendas',
-    SAFRAS: '/safras',
-    CUSTOS: '/custos',
-    VENDAS: '/vendas',
+    COLHEITAS: '/colheitas',
+    GASTOS: '/gastos',
+    LUCROS: '/lucros',
     ESTOQUE: '/estoque',
-    COTACAO: '/cotacao/dollar',
+    COTACAO: '/cotacao/dolar',
+    LEMBRETES: '/lembretes',
+    INSUMOS: '/insumos',
     RELATORIOS: '/relatorios',
-    SIMULACAO: '/simulacao/venda',
+    SIMULACAO: '/simulacao',
+    IA: '/ia/insights',
   }
 
 ✅ Evita magic strings espalhados no código
@@ -570,31 +640,31 @@ variables.css
 
 ```
 👤 Usuário interage com a tela
-        │
-        ▼
- page / component
- (estilizado com Tailwind)
-        │
-        ▼
- query (TanStack Query)
- ex: useGetFazendas()
-        │
-        ▼
- service (axios)
- ex: fazenda.service.js
-        │
-        ▼
+      │
+      ▼
+page / component
+(estilizado com Tailwind)
+      │
+      ▼
+query (TanStack Query)
+ex: useGetColheitas()
+      │
+      ▼
+service (axios)
+ex: colheita.service.js
+      │
+      ▼
 ══════ HTTP ══════
-   /api/fazendas
+ /api/colheitas
 ══════ HTTP ══════
-        │
-        ▼
- React Query cache
- atualiza os dados
-        │
-        ▼
- componente re-renderiza
- com os dados atualizados
+      │
+      ▼
+React Query cache
+atualiza os dados
+      │
+      ▼
+componente re-renderiza
+com os dados atualizados
 
 ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
 Se ocorrer erro:
@@ -618,15 +688,22 @@ PÚBLICAS (AuthLayout — sem menu)
 /login      → tela de login
 /cadastro   → tela de cadastro
 
-PRIVADAS (MainLayout — com menu)
-/           → dashboard
-/fazendas   → fazendas
-/safras     → safras
-/custos     → custos
-/vendas     → vendas
+PRIVADAS (MainLayout — todos logados)
+/           → dashboard (RF08)
+/fazendas   → fazendas (RF01)
+/colheitas  → colheitas (RF03)
+/gastos     → gastos (RF05)
+/lucros     → lucros (RF06)
 /estoque    → estoque
-/relatorios → relatórios
-/simulacao  → simulação de venda
+/lembretes  → lembretes (RF10)
+/simulacao  → calculadora de dívidas (RF09)
+
+SÓ ADMIN (AdminRoute)
+/relatorios → relatórios (RF04, RF07)
+/ia         → insights IA (RF11)
+
+SÓ FUNCIONARIO
+/insumos    → registro de insumos (RF13)
 ```
 
 ---
@@ -637,8 +714,12 @@ PRIVADAS (MainLayout — com menu)
 # Instalar dependências
 npm install
 
+# Copiar o .env
+cp .env.example .env
+
 # Rodar em desenvolvimento
 npm run dev
+# → http://localhost:5173
 
 # Gerar build de produção
 npm run build
@@ -652,6 +733,18 @@ npm run lint
 
 ---
 
+## 📋 Scripts
+
+| Script | Descrição |
+|--------|-----------|
+| `npm run dev` | Desenvolvimento com hot reload |
+| `npm run build` | Build de produção |
+| `npm run preview` | Preview do build |
+| `npm test` | Testes |
+| `npm run lint` | Lint |
+
+---
+
 ## 🔑 Variáveis de Ambiente
 
 Copie o `.env.example` e crie seu `.env`:
@@ -661,5 +754,4 @@ cp .env.example .env
 env
 VITE_API_URL=http://localhost:3333/api
 `
-
----
+```

@@ -31,6 +31,9 @@ responsabilidades.
 | JWT | Autenticação |
 | Bcrypt | Criptografia de senhas |
 | Pino | Logs |
+| node-cron | Agendamento de lembretes |
+| Google Gemini | Inteligência Artificial |
+| Evolution API | Envio de mensagens WhatsApp |
 | Vitest | Testes |
 
 ---
@@ -45,57 +48,77 @@ apps/api/src/
 │
 ├── 📁 models/
 │   ├── 📄 Fazenda.js
-│   ├── 📄 Safra.js
-│   ├── 📄 Custo.js
-│   ├── 📄 Venda.js
+│   ├── 📄 Colheita.js
+│   ├── 📄 Gasto.js
+│   ├── 📄 Lucro.js
+│   ├── 📄 Lembrete.js
+│   ├── 📄 Insumo.js
 │   └── 📄 Cotacao.js
 │
 ├── 📁 views/
-│   ├── 📄 cotacao.view.js
-│   ├── 📄 custo.view.js
-│   ├── 📄 estoque.view.js
 │   ├── 📄 fazenda.view.js
+│   ├── 📄 colheita.view.js
+│   ├── 📄 gasto.view.js
+│   ├── 📄 lucro.view.js
+│   ├── 📄 lembrete.view.js
+│   ├── 📄 insumo.view.js
+│   ├── 📄 estoque.view.js
+│   ├── 📄 cotacao.view.js
 │   ├── 📄 relatorio.view.js
-│   ├── 📄 safra.view.js
-│   ├── 📄 simulacao.view.js
-│   └── 📄 venda.view.js
+│   └── 📄 simulacao.view.js
 │
 ├── 📁 controllers/
-│   ├── 📄 cotacao.controller.js
-│   ├── 📄 custo.controller.js
-│   ├── 📄 estoque.controller.js
+│   ├── 📄 auth.controller.js
 │   ├── 📄 fazenda.controller.js
+│   ├── 📄 colheita.controller.js
+│   ├── 📄 gasto.controller.js
+│   ├── 📄 lucro.controller.js
+│   ├── 📄 lembrete.controller.js
+│   ├── 📄 insumo.controller.js
+│   ├── 📄 estoque.controller.js
+│   ├── 📄 cotacao.controller.js
 │   ├── 📄 relatorio.controller.js
-│   ├── 📄 safra.controller.js
 │   ├── 📄 simulacao.controller.js
-│   └── 📄 venda.controller.js
+│   └── 📄 ia.controller.js
 │
 ├── 📁 services/
-│   ├── 📄 cotacao.service.js
-│   ├── 📄 custo.service.js
-│   ├── 📄 estoque.service.js
+│   ├── 📄 auth.service.js
 │   ├── 📄 fazenda.service.js
+│   ├── 📄 colheita.service.js
+│   ├── 📄 gasto.service.js
+│   ├── 📄 lucro.service.js
+│   ├── 📄 lembrete.service.js
+│   ├── 📄 insumo.service.js
+│   ├── 📄 estoque.service.js
+│   ├── 📄 cotacao.service.js
 │   ├── 📄 relatorio.service.js
-│   ├── 📄 safra.service.js
 │   ├── 📄 simulacao.service.js
-│   └── 📄 venda.service.js
+│   ├── 📄 whatsapp.service.js
+│   └── 📄 ia.service.js
 │
 ├── 📁 repositories/
-│   ├── 📄 custo.repository.js
-│   ├── 📄 estoque.repository.js
+│   ├── 📄 auth.repository.js
 │   ├── 📄 fazenda.repository.js
-│   ├── 📄 safra.repository.js
-│   └── 📄 venda.repository.js
+│   ├── 📄 colheita.repository.js
+│   ├── 📄 gasto.repository.js
+│   ├── 📄 lucro.repository.js
+│   ├── 📄 lembrete.repository.js
+│   ├── 📄 insumo.repository.js
+│   └── 📄 estoque.repository.js
 │
 ├── 📁 routes/
-│   ├── 📄 cotacao.routes.js
-│   ├── 📄 custo.routes.js
-│   ├── 📄 estoque.routes.js
+│   ├── 📄 auth.routes.js
 │   ├── 📄 fazenda.routes.js
+│   ├── 📄 colheita.routes.js
+│   ├── 📄 gasto.routes.js
+│   ├── 📄 lucro.routes.js
+│   ├── 📄 lembrete.routes.js
+│   ├── 📄 insumo.routes.js
+│   ├── 📄 estoque.routes.js
+│   ├── 📄 cotacao.routes.js
 │   ├── 📄 relatorio.routes.js
-│   ├── 📄 safra.routes.js
 │   ├── 📄 simulacao.routes.js
-│   ├── 📄 venda.routes.js
+│   ├── 📄 ia.routes.js
 │   └── 📄 index.js
 │
 ├── 📁 middlewares/
@@ -106,11 +129,17 @@ apps/api/src/
 │   └── 📄 logger.middleware.js
 │
 ├── 📁 schemas/
-│   ├── 📄 custo.schema.js
+│   ├── 📄 auth.schema.js
 │   ├── 📄 fazenda.schema.js
-│   ├── 📄 safra.schema.js
-│   ├── 📄 simulacao.schema.js
-│   └── 📄 venda.schema.js
+│   ├── 📄 colheita.schema.js
+│   ├── 📄 gasto.schema.js
+│   ├── 📄 lucro.schema.js
+│   ├── 📄 lembrete.schema.js
+│   ├── 📄 insumo.schema.js
+│   └── 📄 simulacao.schema.js
+│
+├── 📁 jobs/
+│   └── 📄 lembretes.job.js
 │
 ├── 📁 config/
 │   ├── 📄 env.js
@@ -135,17 +164,17 @@ apps/api/src/
 └── 📁 tests/
   ├── 📄 setup.js
   ├── 📁 unit/
-  │   ├── 📄 custo.service.spec.js
-  │   ├── 📄 estoque.service.spec.js
   │   ├── 📄 fazenda.service.spec.js
-  │   ├── 📄 relatorio.service.spec.js
-  │   ├── 📄 safra.service.spec.js
-  │   └── 📄 venda.service.spec.js
+  │   ├── 📄 colheita.service.spec.js
+  │   ├── 📄 gasto.service.spec.js
+  │   ├── 📄 lucro.service.spec.js
+  │   ├── 📄 lembrete.service.spec.js
+  │   └── 📄 simulacao.service.spec.js
   └── 📁 integration/
-      ├── 📄 estoque.spec.js
       ├── 📄 fazenda.spec.js
-      ├── 📄 safra.spec.js
-      └── 📄 venda.spec.js
+      ├── 📄 colheita.spec.js
+      ├── 📄 gasto.spec.js
+      └── 📄 lucro.spec.js
 ```
 
 ---
@@ -160,6 +189,7 @@ apps/api/src/
 ```
 → Importa o app.js
 → Sobe o servidor na porta definida no .env
+→ Inicia o cron job de lembretes
 → Loga confirmação no console
 ```
 
@@ -183,17 +213,23 @@ apps/api/src/
 Fazenda.js
 → id, nome, tipo (propria | arrendada), localizacao, criadoEm
 
-Safra.js
+Colheita.js
 → id, fazendaId, cultura (soja | milho | cafe)
-→ area, sacas, ano, criadoEm
+→ quantidade_sacas, data_colheita, criadoEm
 
-Custo.js
-→ id, safraId
-→ tipo (adubo | sementes | combustivel | diesel | manutencao)
-→ valor, descricao, criadoEm
+Gasto.js
+→ id, colheitaId, tipo (adubo | sementes | combustivel | diesel | manutencao)
+→ valor, data_vencimento, status (pago | pendente), descricao, criadoEm
 
-Venda.js
-→ id, safraId, quantidade, valor, data, criadoEm
+Lucro.js
+→ id, colheitaId, quantidade_sacas, valor_unitario, comprador, data, criadoEm
+
+Lembrete.js
+→ id, usuarioId, fazendaId, titulo, descricao
+→ data_lembrete, telefone_whatsapp, status, criadoEm
+
+Insumo.js
+→ id, funcionarioId, fazendaId, item, quantidade, observacoes, data, criadoEm
 
 Cotacao.js
 → id, valor, fonte, atualizadoEm
@@ -214,17 +250,25 @@ fazenda.view.js
 → render(fazenda)        → formata um único registro
 → renderMany(fazendas)   → formata uma lista
 
-safra.view.js
-→ render(safra)
-→ renderMany(safras)
+colheita.view.js
+→ render(colheita)
+→ renderMany(colheitas)
 
-custo.view.js
-→ render(custo)
-→ renderMany(custos)
+gasto.view.js
+→ render(gasto)
+→ renderMany(gastos)
 
-venda.view.js
-→ render(venda)
-→ renderMany(vendas)
+lucro.view.js
+→ render(lucro)
+→ renderMany(lucros)
+
+lembrete.view.js
+→ render(lembrete)
+→ renderMany(lembretes)
+
+insumo.view.js
+→ render(insumo)
+→ renderMany(insumos)
 
 estoque.view.js
 → render(estoque)        → saldo de sacas disponíveis
@@ -233,13 +277,12 @@ cotacao.view.js
 → render(cotacao)        → valor do dólar e horário de atualização
 
 relatorio.view.js
-→ renderCustosVsVendas(dados)    → RF07 gráfico custos x vendas
-→ renderLucroPorSafra(dados)     → RF09 lucro por safra
-→ renderCustosPorCultura(dados)  → RF10 custos por cultura
-→ renderMinPreco(dados)          → RF11 preço mínimo de venda
+→ renderGastosVsLucros(dados)    → RF08 gráfico gastos x lucros
+→ renderHistoricoProducao(dados) → RF04 histórico por cultura
+→ renderGastosPorTipo(dados)     → RF07 filtro avançado de gastos
 
 simulacao.view.js
-→ render(simulacao)      → resultado da simulação de venda
+→ render(simulacao)      → resultado do cálculo de abatimento
 
 ✅ Padroniza o formato de todas as respostas
 ✅ Remove campos sensíveis antes de responder
@@ -252,50 +295,71 @@ simulacao.view.js
 > **Recebe a requisição**, chama o service e **retorna a resposta**
 
 ```
+auth.controller.js
+→ login    POST  /api/auth/login
+→ cadastro POST  /api/auth/cadastro
+→ logout   POST  /api/auth/logout
+
 fazenda.controller.js
-→ getAll          GET    /api/fazendas
-→ getPorId        GET    /api/fazendas/:id
-→ create          POST   /api/fazendas
-→ update          PUT    /api/fazendas/:id
-→ delete          DELETE /api/fazendas/:id
+→ getAll       GET    /api/fazendas
+→ getPorId     GET    /api/fazendas/:id
+→ create       POST   /api/fazendas
+→ update       PUT    /api/fazendas/:id
+→ delete       DELETE /api/fazendas/:id
 
-safra.controller.js
-→ getAll          GET    /api/safras
-→ getPorId        GET    /api/safras/:id
-→ getPorFazenda   GET    /api/safras/fazenda/:fazendaId
-→ create          POST   /api/safras
-→ update          PUT    /api/safras/:id
-→ delete          DELETE /api/safras/:id
+colheita.controller.js
+→ getAll         GET    /api/colheitas
+→ getPorId       GET    /api/colheitas/:id
+→ getPorFazenda  GET    /api/colheitas/fazenda/:fazendaId
+→ create         POST   /api/colheitas
+→ update         PUT    /api/colheitas/:id
+→ delete         DELETE /api/colheitas/:id
 
-custo.controller.js
-→ getAll          GET    /api/custos
-→ getPorSafra     GET    /api/custos/safra/:safraId
-→ create          POST   /api/custos
-→ update          PUT    /api/custos/:id
-→ delete          DELETE /api/custos/:id
+gasto.controller.js
+→ getAll          GET    /api/gastos
+→ getPorColheita  GET    /api/gastos/colheita/:colheitaId
+→ create          POST   /api/gastos
+→ update          PUT    /api/gastos/:id
+→ delete          DELETE /api/gastos/:id
 
-venda.controller.js
-→ getAll          GET    /api/vendas
-→ getPorSafra     GET    /api/vendas/safra/:safraId
-→ create          POST   /api/vendas
-→ update          PUT    /api/vendas/:id
-→ delete          DELETE /api/vendas/:id
+lucro.controller.js
+→ getAll          GET    /api/lucros
+→ getPorColheita  GET    /api/lucros/colheita/:colheitaId
+→ create          POST   /api/lucros
+→ update          PUT    /api/lucros/:id
+→ delete          DELETE /api/lucros/:id
+
+lembrete.controller.js
+→ getAll    GET    /api/lembretes
+→ getPorId  GET    /api/lembretes/:id
+→ create    POST   /api/lembretes
+→ update    PUT    /api/lembretes/:id
+→ delete    DELETE /api/lembretes/:id
+
+insumo.controller.js
+→ getAll        GET    /api/insumos
+→ getPorFazenda GET    /api/insumos/fazenda/:fazendaId
+→ create        POST   /api/insumos
+→ delete        DELETE /api/insumos/:id
 
 estoque.controller.js
-→ getAll          GET    /api/estoque
-→ getPorSafra     GET    /api/estoque/safra/:safraId
+→ getAll         GET    /api/estoque
+→ getPorColheita GET    /api/estoque/colheita/:colheitaId
 
 cotacao.controller.js
-→ getDollar       GET    /api/cotacao/dollar
+→ getDolar       GET    /api/cotacao/dolar
 
 relatorio.controller.js
-→ custosVsVendas     GET  /api/relatorios/custos-vs-vendas
-→ lucroPorSafra      GET  /api/relatorios/lucro/:safraId
-→ custosPorCultura   GET  /api/relatorios/custos-por-cultura
-→ minPreco           GET  /api/relatorios/min-preco
+→ gastosVsLucros     GET  /api/relatorios/gastos-vs-lucros
+→ historicoProducao  GET  /api/relatorios/historico-producao
+→ gastosPorTipo      GET  /api/relatorios/gastos-por-tipo
 
 simulacao.controller.js
-→ simularVenda    POST   /api/simulacao/venda
+→ calcularAbatimento GET  /api/simulacao/dividas
+→ calcularSacas      POST /api/simulacao/calcular-sacas
+
+ia.controller.js
+→ gerarInsights      GET  /api/ia/insights
 
 ✅ Recebe req e res
 ✅ Chama o service correto
@@ -312,40 +376,52 @@ simulacao.controller.js
 
 ```
 fazenda.service.js
-→ Valida tipo obrigatório (propria | arrendada)        → Restrição 1
-→ Bloqueia exclusão se tiver safras vinculadas         → RNF06
+→ Valida tipo obrigatório (propria | arrendada)
+→ Bloqueia exclusão se tiver colheitas vinculadas
 
-safra.service.js
+colheita.service.js
 → Valida se a fazenda existe antes de criar
 → Valida cultura (soja | milho | cafe)
 
-custo.service.js
-→ Valida se a safra existe antes de criar              → Restrição 3
+gasto.service.js
+→ Valida se a colheita existe antes de criar
+→ Gerencia status (pago | pendente)
+→ Valida data_vencimento (opcional)
 
-venda.service.js
-→ Busca saldo atual do estoque
-→ Bloqueia se quantidade > estoque disponível          → Restrição 2
+lucro.service.js
+→ Valida se a colheita existe
+→ Verifica estoque antes de registrar lucro
+
+lembrete.service.js
+→ Cria e atualiza lembretes
+→ Gerencia status (pendente | enviado | cancelado)
+
+whatsapp.service.js
+→ Conecta com Evolution API via axios
+→ Envia mensagem de lembrete no WhatsApp
+
+ia.service.js
+→ Busca dados de gastos e lucros do banco
+→ Monta prompt com os dados
+→ Chama Google Gemini API
+→ Retorna insights gerados
+
+insumo.service.js
+→ Valida se fazenda e funcionário existem
+→ Registra uso de insumos pelo funcionário
 
 estoque.service.js
-→ Calcula: sacas_produzidas - sacas_vendidas           → RF08
+→ Calcula: quantidade_sacas_colhidas - sacas_vendidas
 
 cotacao.service.js
 → Verifica se existe cache válido
 → Busca na API externa se cache estiver vencido
 → Salva novo valor no cache com timestamp
-→ Atualiza em menos de 2 segundos ao reconectar        → RNF03
-
-relatorio.service.js
-→ Soma custos e vendas agrupados por safra             → RF07
-→ Calcula lucro por safra: vendas - custos             → RF09
-→ Soma custos agrupados por cultura                    → RF10
-→ Calcula preço mínimo: custos ÷ sacas produzidas      → RF11
-→ Todos aceitam filtro por data de início e fim        → RF12
 
 simulacao.service.js
-→ Busca saldo atual do estoque
-→ Busca cotação atual do dólar
-→ Calcula valor bruto: estoque × cotação               → RF06
+→ Busca total de gastos (pago + pendente)
+→ Calcula sacas necessárias para abater dívida
+→ Retorna breakdown por status
 
 ✅ Toda regra de negócio fica aqui
 ✅ Chama o repository para acessar o banco
@@ -363,12 +439,12 @@ simulacao.service.js
 fazenda.repository.js
 → buscarTodos
 → buscarPorId
-→ buscarComSafras       → traz fazenda com suas safras vinculadas
+→ buscarComColheitas   → traz fazenda com suas colheitas vinculadas
 → create
 → update
 → delete
 
-safra.repository.js
+colheita.repository.js
 → buscarTodos
 → buscarPorId
 → buscarPorFazenda
@@ -376,23 +452,38 @@ safra.repository.js
 → update
 → delete
 
-custo.repository.js
+gasto.repository.js
 → buscarTodos
-→ buscarPorSafra
+→ buscarPorColheita
+→ totalPorStatus       → soma separada de PAGO e PENDENTE
 → create
 → update
 → delete
 
-venda.repository.js
+lucro.repository.js
 → buscarTodos
-→ buscarPorSafra
+→ buscarPorColheita
 → create
 → update
+→ delete
+
+lembrete.repository.js
+→ buscarTodos
+→ buscarPorId
+→ buscarPendentes      → lembretes com data próxima (para o cron)
+→ create
+→ update
+→ delete
+
+insumo.repository.js
+→ buscarTodos
+→ buscarPorFazenda
+→ create
 → delete
 
 estoque.repository.js
-→ totalSacasPorSafra    → soma total de sacas produzidas
-→ totalVendidasPorSafra → soma total de sacas já vendidas
+→ totalSacasPorColheita    → soma total de sacas colhidas
+→ totalVendidasPorColheita → soma total de sacas já vendidas
 
 ✅ Toda query de banco fica aqui
 ✅ Se trocar de banco, só mexe aqui
@@ -406,14 +497,18 @@ estoque.repository.js
 > Define as **URLs** e conecta aos controllers
 
 ```
-fazenda.routes.js     → rotas de /api/fazendas
-safra.routes.js       → rotas de /api/safras
-custo.routes.js       → rotas de /api/custos
-venda.routes.js       → rotas de /api/vendas
-estoque.routes.js     → rotas de /api/estoque
-cotacao.routes.js     → rotas de /api/cotacao
-relatorio.routes.js   → rotas de /api/relatorios
-simulacao.routes.js   → rotas de /api/simulacao
+auth.routes.js      → rotas de /api/auth
+fazenda.routes.js   → rotas de /api/fazendas
+colheita.routes.js  → rotas de /api/colheitas
+gasto.routes.js     → rotas de /api/gastos
+lucro.routes.js     → rotas de /api/lucros
+lembrete.routes.js  → rotas de /api/lembretes
+insumo.routes.js    → rotas de /api/insumos
+estoque.routes.js   → rotas de /api/estoque
+cotacao.routes.js   → rotas de /api/cotacao
+relatorio.routes.js → rotas de /api/relatorios
+simulacao.routes.js → rotas de /api/simulacao
+ia.routes.js        → rotas de /api/ia
 
 index.js
 → Agrupa todas as rotas em um único lugar
@@ -461,35 +556,68 @@ logger.middleware.js
 > **Validação dos dados** de entrada com Zod
 
 ```
+auth.schema.js
+→ email: string obrigatório
+→ senha: string obrigatório, mínimo 6 caracteres
+
 fazenda.schema.js
 → nome: string obrigatório
 → tipo: enum (propria | arrendada) obrigatório
 
-safra.schema.js
-→ fazendaId: número obrigatório
+colheita.schema.js
+→ fazendaId: uuid obrigatório
 → cultura: enum (soja | milho | cafe) obrigatório
-→ area: número obrigatório
-→ sacas: número obrigatório
-→ ano: número obrigatório
+→ quantidade_sacas: número obrigatório
+→ data_colheita: data obrigatória
 
-custo.schema.js
-→ safraId: número obrigatório
+gasto.schema.js
+→ colheitaId: uuid obrigatório
 → tipo: enum (adubo | sementes | combustivel | diesel | manutencao)
 → valor: número obrigatório
+→ data_vencimento: data opcional
+→ status: enum (pago | pendente) obrigatório
 → descricao: string opcional
 
-venda.schema.js
-→ safraId: número obrigatório
+lucro.schema.js
+→ colheitaId: uuid obrigatório
+→ quantidade_sacas: número obrigatório
+→ valor_unitario: número obrigatório
+→ comprador: string obrigatório
+→ data: data obrigatória
+
+lembrete.schema.js
+→ titulo: string obrigatório
+→ data_lembrete: datetime obrigatório
+→ telefone_whatsapp: string opcional
+→ descricao: string opcional
+
+insumo.schema.js
+→ fazendaId: uuid obrigatório
+→ item: string obrigatório
 → quantidade: número obrigatório
-→ valor: número obrigatório
-→ data: data obrigatório
+→ observacoes: string opcional
+→ data: data obrigatória
 
 simulacao.schema.js
-→ safraId: número obrigatório
+→ colheitaId: uuid obrigatório
+→ valorDivida: número obrigatório
 
 ✅ Garante que dados inválidos nem chegam no controller
 ✅ Retorna mensagens de erro claras e padronizadas
 ✅ Sempre usado junto com o validator.middleware
+```
+
+---
+
+### 📁 `jobs/`
+> Tarefas agendadas que rodam em **paralelo ao servidor**
+
+```
+lembretes.job.js
+→ Cron que roda de hora em hora
+→ Busca lembretes com data próxima
+→ Chama whatsapp.service para enviar a mensagem
+→ Atualiza status do lembrete para ENVIADO
 ```
 
 ---
@@ -573,36 +701,36 @@ setup.js
 unit/
 → Testa funções isoladas de cada service
 → Sem banco real — usa mock do repository
-→ Rápido de rodar
 
 fazenda.service.spec.js
-  → testa bloqueio de exclusão com safras vinculadas
+  → testa bloqueio de exclusão com colheitas vinculadas
   → testa validação de tipo (propria | arrendada)
 
-safra.service.spec.js
+colheita.service.spec.js
   → testa validação de cultura
   → testa vínculo com fazenda existente
 
-custo.service.spec.js
-  → testa validação de safra existente antes de criar
+gasto.service.spec.js
+  → testa validação de colheita existente
+  → testa gerenciamento de status (pago | pendente)
 
-venda.service.spec.js
+lucro.service.spec.js
   → testa bloqueio por estoque insuficiente
+  → testa vínculo com colheita existente
 
-estoque.service.spec.js
-  → testa cálculo correto do saldo de sacas
+lembrete.service.spec.js
+  → testa criação e atualização de status
 
-relatorio.service.spec.js
-  → testa cálculos de lucro e preço mínimo
+simulacao.service.spec.js
+  → testa cálculo de abatimento de dívida
 
 integration/
 → Testa o fluxo completo da rota até o banco
-→ Usa banco de teste real
 
 fazenda.spec.js    → CRUD completo + regras de exclusão
-safra.spec.js      → CRUD + vínculo com fazenda
-venda.spec.js      → criação + validação de estoque
-estoque.spec.js    → cálculo real com dados no banco
+colheita.spec.js   → CRUD + vínculo com fazenda
+gasto.spec.js      → CRUD + validação de status
+lucro.spec.js      → criação + validação de estoque
 ```
 
 ---
@@ -610,79 +738,73 @@ estoque.spec.js    → cálculo real com dados no banco
 ## 🔄 Fluxo de uma Requisição
 
 ```
-                    REQUEST
-                       │
-                       ▼
-                ┌────────────┐
-                │   routes   │
-                │  index.js  │  agrupa todas as rotas
-                └─────┬──────┘
-                       │
-                       ▼
-       ┌───────────────────────────────┐
-       │           middlewares         │
-       │                               │
-       │  1. logger.middleware         │ loga a requisição
-       │  2. auth.middleware           │ token válido?
-       │  3. validator.middleware      │ body válido?
-       └───────────────┬───────────────┘
-                       │
-                       ▼
-              ┌─────────────────┐
-              │   controller    │◄── C do MVC
-              │                 │
-              │ recebe req/res  │
-              │ chama o service │
-              │ retorna resposta│
-              └────────┬────────┘
-                       │
-                       ▼
-               ┌───────────────┐
-               │    service    │
-               │               │
-               │ regra de      │
-               │ negócio       │
-               │ lança AppError│
-               └───────┬───────┘
-                       │
-                       ▼
-              ┌─────────────────┐
-              │   repository    │
-              │                 │
-              │ única camada    │
-              │ que acessa      │
-              │ o banco         │
-              └────────┬────────┘
-                       │
-                       ▼
-                 ┌──────────┐
-                 │  model   │◄── M do MVC
-                 │          │
-                 │ estrutura│
-                 │ dos dados│
-                 └────┬─────┘
-                      │
-                      ▼
-             ┌──────────────────┐
-             │      view        │◄── V do MVC
-             │                  │
-             │ formata o JSON   │
-             │ remove campos    │
-             │ sensíveis        │
-             └────────┬─────────┘
-                      │
-                      ▼
-                   RESPONSE
+                  REQUEST
+                     │
+                     ▼
+              ┌────────────┐
+              │   routes   │
+              │  index.js  │  agrupa todas as rotas
+              └─────┬──────┘
+                     │
+                     ▼
+     ┌───────────────────────────────┐
+     │           middlewares         │
+     │                               │
+     │  1. logger.middleware         │ loga a requisição
+     │  2. auth.middleware           │ token válido?
+     │  3. validator.middleware      │ body válido?
+     └───────────────┬───────────────┘
+                     │
+                     ▼
+            ┌─────────────────┐
+            │   controller    │◄── C do MVC
+            │                 │
+            │ recebe req/res  │
+            │ chama o service │
+            │ retorna resposta│
+            └────────┬────────┘
+                     │
+                     ▼
+             ┌───────────────┐
+             │    service    │
+             │               │
+             │ regra de      │
+             │ negócio       │
+             │ lança AppError│
+             └───┬───────────┘
+                 │
+     ┌───────────┼────────────┐
+     ▼           ▼            ▼
+repository  whatsapp.svc   ia.svc
+(banco)     (Evolution)    (Gemini)
+     │
+     ▼
+   model     ◄── M do MVC
+     │
+     ▼
+    view     ◄── V do MVC
+     │
+     ▼
+ RESPONSE
+
+─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+CRON (paralelo ao servidor)
+lembretes.job.js
+  → roda de hora em hora
+  → busca lembretes pendentes
+  → envia via whatsapp.service
+  → atualiza status para ENVIADO
+─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
 
 ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
 Se ocorrer erro em qualquer etapa:
 
 service lança AppError
-     │
-     ▼
+   │
+   ▼
 controller → next(error)
-     │
-     ▼
+   │
+   ▼
 error.middleware
 → loga o erro
 → retorna JSON padronizado
@@ -696,6 +818,11 @@ error.middleware
 ```
 Todas as rotas seguem o prefixo /api
 
+AUTH
+POST   /api/auth/login
+POST   /api/auth/cadastro
+POST   /api/auth/logout
+
 FAZENDAS
 GET    /api/fazendas
 GET    /api/fazendas/:id
@@ -703,45 +830,60 @@ POST   /api/fazendas
 PUT    /api/fazendas/:id
 DELETE /api/fazendas/:id
 
-SAFRAS
-GET    /api/safras
-GET    /api/safras/:id
-GET    /api/safras/fazenda/:fazendaId
-POST   /api/safras
-PUT    /api/safras/:id
-DELETE /api/safras/:id
+COLHEITAS
+GET    /api/colheitas
+GET    /api/colheitas/:id
+GET    /api/colheitas/fazenda/:fazendaId
+POST   /api/colheitas
+PUT    /api/colheitas/:id
+DELETE /api/colheitas/:id
 
-CUSTOS
-GET    /api/custos
-GET    /api/custos/safra/:safraId
-POST   /api/custos
-PUT    /api/custos/:id
-DELETE /api/custos/:id
+GASTOS
+GET    /api/gastos
+GET    /api/gastos/colheita/:colheitaId
+POST   /api/gastos
+PUT    /api/gastos/:id
+DELETE /api/gastos/:id
 
-VENDAS
-GET    /api/vendas
-GET    /api/vendas/safra/:safraId
-POST   /api/vendas
-PUT    /api/vendas/:id
-DELETE /api/vendas/:id
+LUCROS
+GET    /api/lucros
+GET    /api/lucros/colheita/:colheitaId
+POST   /api/lucros
+PUT    /api/lucros/:id
+DELETE /api/lucros/:id
 
 ESTOQUE
 GET    /api/estoque
-GET    /api/estoque/safra/:safraId
+GET    /api/estoque/colheita/:colheitaId
 
 COTAÇÃO
-GET    /api/cotacao/dollar
+GET    /api/cotacao/dolar
+
+LEMBRETES
+GET    /api/lembretes
+GET    /api/lembretes/:id
+POST   /api/lembretes
+PUT    /api/lembretes/:id
+DELETE /api/lembretes/:id
+
+INSUMOS
+GET    /api/insumos
+GET    /api/insumos/fazenda/:fazendaId
+POST   /api/insumos
+DELETE /api/insumos/:id
 
 RELATÓRIOS
-GET    /api/relatorios/custos-vs-vendas
-GET    /api/relatorios/lucro/:safraId
-GET    /api/relatorios/custos-por-cultura
-GET    /api/relatorios/min-preco
+GET    /api/relatorios/gastos-vs-lucros
+GET    /api/relatorios/historico-producao
+GET    /api/relatorios/gastos-por-tipo
+Todos aceitam: ?fazendaId=&dataInicio=&dataFim=
 
-Todos aceitam: ?dataInicio=&dataFim=
+SIMULAÇÃO (RF09)
+GET    /api/simulacao/dividas
+POST   /api/simulacao/calcular-sacas
 
-SIMULAÇÃO
-POST   /api/simulacao/venda
+IA (RF11)
+GET    /api/ia/insights
 ```
 
 ---
@@ -749,21 +891,34 @@ POST   /api/simulacao/venda
 ## ⚙️ Regras de Negócio
 
 ```
-Restrição 1 — Tipo de fazenda obrigatório
-→ Toda fazenda deve ser (propria | arrendada)
-→ Validado no schema antes de chegar no service
+Fazendas
+→ Tipo obrigatório (propria | arrendada)
+→ Não pode excluir se tiver colheitas vinculadas
 
-Restrição 2 — Bloqueio de venda por estoque
-→ Busca saldo atual: sacas_produzidas - sacas_vendidas
-→ Se quantidade > saldo disponível → AppError 400
+Colheitas
+→ Fazenda deve existir antes de criar
+→ Cultura deve ser (soja | milho | cafe)
 
-Restrição 3 — Custo deve ter safra vinculada
-→ Verifica se a safra existe antes de criar o custo
-→ Se não existir → AppError 404
+Gastos
+→ Colheita deve existir antes de criar
+→ Status obrigatório (pago | pendente)
+→ data_vencimento é opcional
 
-RNF06 — Bloqueio de exclusão de fazenda
-→ Verifica se existem safras vinculadas antes de deletar
-→ Se existir → AppError 400 com mensagem explicativa
+Lucros
+→ Colheita deve existir
+→ Quantidade não pode ser maior que o estoque disponível
+
+Lembretes
+→ Enviados automaticamente via WhatsApp pelo cron job
+→ Status: pendente → enviado após envio
+
+Insumos
+→ Somente FUNCIONARIO pode registrar
+→ Fazenda deve existir
+
+IA
+→ Dados de gastos e lucros enviados ao Gemini
+→ Prompt pré-definido para geração de insights
 ```
 
 ---
@@ -774,21 +929,39 @@ RNF06 — Bloqueio de exclusão de fazenda
 # Instalar dependências
 npm install
 
-# Rodar em desenvolvimento
-npm run dev
+# Copiar o .env
+cp .env.example .env
+# → preencher as variáveis
 
-# Rodar em produção
-npm start
+# Gerar o client do Prisma
+npx prisma generate
 
-# Rodar os testes
-npm test
-
-# Rodar migrations do banco
+# Rodar as migrations
 npx prisma migrate dev
 
 # Popular o banco com dados iniciais
-npm run seed
+npm run db:seed
+
+# Rodar em desenvolvimento
+npm run dev
+# → servidor rodando em http://localhost:3333
 ```
+
+---
+
+## 📋 Scripts
+
+| Script | Descrição |
+|--------|-----------|
+| `npm run dev` | Desenvolvimento com hot reload |
+| `npm start` | Produção |
+| `npm test` | Testes |
+| `npm run test:coverage` | Testes com cobertura |
+| `npm run db:migrate` | Atualiza o banco |
+| `npm run db:generate` | Gera o client do Prisma |
+| `npm run db:studio` | Interface visual do banco |
+| `npm run db:seed` | Dados iniciais |
+| `npm run db:reset` | ⚠️ Apaga e recria o banco |
 
 ---
 
@@ -804,14 +977,23 @@ PORT=3333
 NODE_ENV=development
 
 # Banco de dados
-DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+DATABASE_URL=
+DIRECT_URL=
 
 # JWT
-JWT_SECRET=sua_chave_secreta_aqui
+JWT_SECRET=
 JWT_EXPIRES_IN=7d
 
 # CORS
 CORS_ORIGIN=http://localhost:5173
+
+# Evolution API (WhatsApp)
+EVOLUTION_API_URL=
+EVOLUTION_API_KEY=
+EVOLUTION_INSTANCE=
+
+# Google Gemini (IA)
+GEMINI_API_KEY=
 ```
 
 ---
@@ -822,8 +1004,8 @@ Todos os erros retornam o mesmo formato:
 
 ```json
 {
-"status": "error",
-"message": "Descrição clara do que aconteceu"
+  "status": "error",
+  "message": "Descrição clara do que aconteceu"
 }
 ```
 
